@@ -43,7 +43,6 @@ export default function Home() {
 
   async function handleGenerate() {
     if (!prompt.trim()) return;
-
     setLoading(true);
     setError(null);
     setResultUrls([]);
@@ -83,7 +82,6 @@ export default function Home() {
       setError("Please enter a valid email");
       return;
     }
-
     setEmailSubmitting(true);
     setError(null);
 
@@ -93,7 +91,6 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-
       if (!res.ok) throw new Error("Failed to submit email");
 
       localStorage.setItem(UNLOCK_KEY, "true");
@@ -108,43 +105,52 @@ export default function Home() {
 
   const showEmailGate = usedFree && !unlocked;
 
+  const inputClass =
+    "flex-1 rounded-none border-4 border-black bg-white px-4 py-3 text-lg font-medium placeholder:text-gray-400 focus:outline-none focus:shadow-[6px_6px_0_0_#000] transition-shadow";
+  const buttonClass =
+    "rounded-none border-4 border-black bg-black px-6 py-3 text-lg font-bold text-yellow-300 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_0_#000] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+
   return (
-    <main className="flex min-h-screen flex-col items-center p-8">
-      <div className="w-full max-w-xl">
-        <h1 className="text-4xl font-bold">Sounded</h1>
-        <p className="mt-2 text-gray-600">
-          Type it. Hear it. Built by emin.builds.
-        </p>
+<main className="min-h-screen bg-yellow-300 p-6 md:p-12">
+      <div className="mx-auto w-full max-w-2xl">
+        <div className="mb-10">
+          <h1 className="text-7xl md:text-8xl font-black tracking-tight -rotate-2 inline-block">
+            SOUNDED.
+          </h1>
+          <p className="mt-4 text-xl font-bold">
+            Type it. Hear it. Built by emin.builds.
+          </p>
+        </div>
 
         {showEmailGate ? (
-          <div className="mt-8 rounded-lg border border-gray-300 p-6">
-            <h2 className="text-xl font-semibold">One more?</h2>
-            <p className="mt-2 text-sm text-gray-600">
+          <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]">
+            <h2 className="text-3xl font-black">ONE MORE?</h2>
+            <p className="mt-2 font-medium">
               Drop your email to keep generating. No spam. Just me telling you
               when I ship the next thing.
             </p>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex flex-col md:flex-row gap-2">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2"
+                className={inputClass}
                 disabled={emailSubmitting}
               />
               <button
                 onClick={handleEmailSubmit}
                 disabled={emailSubmitting || !email.trim()}
-                className="rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
+                className={buttonClass}
               >
-                {emailSubmitting ? "Saving..." : "Unlock"}
+                {emailSubmitting ? "..." : "UNLOCK"}
               </button>
             </div>
-            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+            {error && <p className="mt-3 font-bold text-red-600">{error}</p>}
           </div>
         ) : (
-          <>
-            <div className="mt-8 flex gap-2">
+          <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]">
+            <div className="flex flex-col md:flex-row gap-2">
               <input
                 type="text"
                 value={prompt}
@@ -153,21 +159,21 @@ export default function Home() {
                   if (e.key === "Enter" && !loading) handleGenerate();
                 }}
                 placeholder="thunder rumbling in the distance"
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2"
+                className={inputClass}
                 disabled={loading}
               />
               <button
                 onClick={handleGenerate}
                 disabled={loading || !prompt.trim()}
-                className="rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
+                className={buttonClass}
               >
-                {loading ? "Cooking..." : "Go"}
+                {loading ? "..." : "GO"}
               </button>
             </div>
 
-            <div className="mt-6 flex flex-col gap-4">
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium">
+                <label className="block text-sm font-black uppercase tracking-wider">
                   Duration: {duration}s
                 </label>
                 <input
@@ -176,17 +182,19 @@ export default function Home() {
                   max="10"
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
-                  className="w-full"
+                  className="w-full mt-2 accent-black"
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Variations</label>
+                <label className="block text-sm font-black uppercase tracking-wider">
+                  Variations
+                </label>
                 <select
                   value={samples}
                   onChange={(e) => setSamples(Number(e.target.value))}
-                  className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+                  className="mt-2 w-full rounded-none border-4 border-black bg-white px-3 py-2 font-bold"
                   disabled={loading}
                 >
                   <option value={1}>1</option>
@@ -195,36 +203,63 @@ export default function Home() {
                   <option value={4}>4</option>
                 </select>
               </div>
-
-              {credits !== null && (
-                <p className="text-sm text-gray-500">
-                  Estimated cost: {credits} credit{credits === 1 ? "" : "s"}
-                </p>
-              )}
             </div>
 
-            {error && <p className="mt-4 text-sm text-red-600">Error: {error}</p>}
-
-            {loading && (
-              <p className="mt-8 text-sm text-gray-500">
-                Mirelo is generating your sounds...
+            {credits !== null && (
+              <p className="mt-4 text-sm font-bold uppercase tracking-wider">
+                Cost: {credits} credit{credits === 1 ? "" : "s"}
               </p>
             )}
-          </>
+
+            {error && (
+              <p className="mt-4 font-bold text-red-600">Error: {error}</p>
+            )}
+
+            {loading && (
+              <div className="mt-6 flex items-center gap-3">
+                <Waveform />
+                <span className="font-bold uppercase tracking-wider">
+                  Cooking
+                </span>
+              </div>
+            )}
+          </div>
         )}
 
         {resultUrls.length > 0 && (
-          <div className="mt-8 flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Results</h2>
-            {resultUrls.map((url, i) => (
-              <div key={url} className="flex flex-col gap-2">
-                <p className="text-sm text-gray-600">Variation {i + 1}</p>
-                <audio controls src={url} className="w-full" />
-              </div>
-            ))}
+          <div className="mt-8 border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]">
+            <h2 className="text-2xl font-black uppercase">Results</h2>
+            <div className="mt-4 flex flex-col gap-4">
+              {resultUrls.map((url, i) => (
+                <div key={url}>
+                  <p className="text-sm font-black uppercase tracking-wider">
+                    Variation {i + 1}
+                  </p>
+                  <audio controls src={url} className="w-full mt-2" />
+                </div>
+              ))}
+            </div>
           </div>
         )}
+
+        <footer className="mt-12 text-center text-sm font-bold">
+          Built with Mirelo + Next.js + caffeine.
+        </footer>
       </div>
     </main>
+  );
+}
+
+function Waveform() {
+  return (
+    <div className="flex items-end gap-1 h-6">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <span
+          key={i}
+          className="w-1.5 bg-black animate-wave"
+          style={{ animationDelay: `${i * 0.12}s` }}
+        />
+      ))}
+    </div>
   );
 }
