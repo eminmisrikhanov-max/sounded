@@ -242,10 +242,10 @@ export default function Home() {
           </div>
         )}
 
-        <footer className="mt-12 text-center text-xs font-black uppercase tracking-widest">
-          STACK: Next.js / Tailwind / Mirelo / Vercel / Resend
+        <footer className="mt-12 text-center text-xs font-medium tracking-wider">
+          <span className="lowercase">stack: next.js / tailwind / mirelo / vercel / resend</span>
           <br />
-          MADE FOR FUN
+          <span className="lowercase">made for fun 🎈</span>
         </footer>
 
       </div>
