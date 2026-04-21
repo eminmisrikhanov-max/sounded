@@ -1,12 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
+  const [duration, setDuration] = useState(1);
+  const [samples, setSamples] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultUrls, setResultUrls] = useState<string[]>([]);
+  const [credits, setCredits] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchPreflight = async () => {
+      try {
+        const res = await fetch(
+          `/api/preflight?duration_ms=${duration * 1000}&num_samples=${samples}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setCredits(data.credits);
+        }
+      } catch {
+        // silently ignore preflight errors
+      }
+    };
+    fetchPreflight();
+  }, [duration, samples]);
 
   async function handleGenerate() {
     if (!prompt.trim()) return;
@@ -19,7 +39,11 @@ export default function Home() {
       const response = await fetch("/api/sfx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({
+          prompt,
+          duration_ms: duration * 1000,
+          num_samples: samples,
+        }),
       });
 
       if (!response.ok) {
@@ -41,7 +65,7 @@ export default function Home() {
       <div className="w-full max-w-xl">
         <h1 className="text-4xl font-bold">Sounded</h1>
         <p className="mt-2 text-gray-600">
-        Describe any sound. Three versions, ten seconds.
+          Type it. Hear it. Built by emin.builds.
         </p>
 
         <div className="mt-8 flex gap-2">
@@ -61,8 +85,48 @@ export default function Home() {
             disabled={loading || !prompt.trim()}
             className="rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
           >
-            {loading ? "Cooking..." : "Make sound"}
+            {loading ? "Cooking..." : "Go"}
           </button>
+        </div>
+
+        <div className="mt-6 flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-medium">
+              Duration: {duration}s
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              className="w-full"
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">
+              Variations
+            </label>
+            <select
+              value={samples}
+              onChange={(e) => setSamples(Number(e.target.value))}
+              className="mt-1 rounded-md border border-gray-300 px-3 py-2"
+              disabled={loading}
+            >
+              <option value={1}>1</option>
+              <option value={2}>2</option>
+              <option value={3}>3</option>
+              <option value={4}>4</option>
+            </select>
+          </div>
+
+          {credits !== null && (
+            <p className="text-sm text-gray-500">
+              Estimated cost: {credits} credit{credits === 1 ? "" : "s"}
+            </p>
+          )}
         </div>
 
         {error && (
@@ -71,7 +135,7 @@ export default function Home() {
 
         {loading && (
           <p className="mt-8 text-sm text-gray-500">
-            Mirelo is generating your sounds. This takes ~10 seconds.
+            Mirelo is generating your sounds...
           </p>
         )}
 

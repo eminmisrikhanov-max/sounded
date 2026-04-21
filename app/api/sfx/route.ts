@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { prompt } = await request.json();
+  const { prompt, duration_ms, num_samples } = await request.json();
 
   if (!prompt || typeof prompt !== "string") {
     return NextResponse.json(
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         prompt,
-        duration_ms: 5000,
-        num_samples: 3,
+        duration_ms: duration_ms ?? 1000,
+        num_samples: num_samples ?? 1,
       }),
     }
   );
