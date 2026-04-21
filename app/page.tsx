@@ -61,7 +61,7 @@ export default function Home() {
             disabled={loading || !prompt.trim()}
             className="rounded-md bg-black px-4 py-2 text-white disabled:opacity-50"
           >
-            {loading ? "Generating..." : "Generate"}
+            {loading ? "Cooking..." : "Make sound"}
           </button>
         </div>
 
