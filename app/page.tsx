@@ -41,7 +41,7 @@ export default function Home() {
       <div className="w-full max-w-xl">
         <h1 className="text-4xl font-bold">Sounded</h1>
         <p className="mt-2 text-gray-600">
-          Describe a sound. Get three AI-generated variations.
+        Describe any sound. Three versions, ten seconds.
         </p>
 
         <div className="mt-8 flex gap-2">
