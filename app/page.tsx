@@ -242,9 +242,12 @@ export default function Home() {
           </div>
         )}
 
-        <footer className="mt-12 text-center text-sm font-bold">
-          Built with Mirelo + Next.js + caffeine.
+        <footer className="mt-12 text-center text-xs font-black uppercase tracking-widest">
+          STACK: Next.js / Tailwind / Mirelo / Vercel / Resend
+          <br />
+          MADE FOR FUN
         </footer>
+
       </div>
     </main>
   );
